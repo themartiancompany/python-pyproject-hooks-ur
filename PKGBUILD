@@ -64,7 +64,7 @@ build() {
 
 check() {
   cd \
-    "${_name}-${pkgver}"
+    "${_pkg}-${pkgver}"
   export \
     PYTHONPATH="$PWD/src:$PYTHONPATH"
   pytest \
@@ -73,7 +73,7 @@ check() {
 
 package() {
   cd \
-    "${_name}-${pkgver}"
+    "${_pkg}-${pkgver}"
   "${_py}" \
     -m installer \
     --destdir="${pkgdir}" \
