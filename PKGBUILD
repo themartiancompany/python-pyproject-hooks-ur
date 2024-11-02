@@ -4,32 +4,47 @@
 # Maintainer: Pellegrino Prevete (tallero) <pellegrinoprevete@gmail.com>
 # Maintainer: David Runge <dvzrv@archlinux.org>
 
-pkgname=python-pyproject-hooks
-_name=${pkgname#python-}
+_py="python"
+_pyver="$( \
+  "${_py}" \
+    -V | \
+    awk \
+      '{print $2}')"
+_pymajver="${_pyver%.*}"
+_pyminver="${_pymajver#*.}"
+_pynextver="${_pymajver%.*}.$(( \
+  ${_pyminver} + 1))"
+_pkg=pyproject-hooks
+pkgname="${_py}-${_pkg}"
 pkgver=1.1.0
 pkgrel=1
 pkgdesc="A low-level library for calling build-backends in pyproject.toml-based project"
-arch=(any)
-url="https://github.com/pypa/pyproject-hooks"
+arch=(
+  any
+)
+_http="https://github.com"
+_ns="pypa"
+url="${_http}/${_ns}/${_pkg}"
 license=(
   MIT
 )
 depends=(
-  python
+  "${_py}>=${_pymajver}"
+  "${_py}<${_pynextver}"
 )
 makedepends=(
-  python-build
-  python-installer
-  python-flit-core
-  python-wheel
+  "${_py}-build"
+  "${_py}-installer"
+  "${_py}-flit-core"
+  "${_py}-wheel"
 )
 checkdepends=(
-  python-pytest
-  python-setuptools
-  python-testpath
+  "${_py}-pytest"
+  "${_py}-setuptools"
+  "${_py}-testpath"
 )
 source=(
-  $pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz
+  "${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz"
 )
 sha512sums=(
   '256028d13adbe35126a63431a2a49e0c48adddce5ffc3ff2eebad368eee7ce52591ecfd8a8526876de20bc59dfc87156533d6a97b55538a739873e60f9509eff'
@@ -40,8 +55,8 @@ b2sums=(
 
 build() {
   cd \
-    "${_name}-${pkgver}"
-  python \
+    "${_pkg}-${pkgver}"
+  "${_py}" \
     -m build \
     --wheel \
     --no-isolation
@@ -59,7 +74,7 @@ check() {
 package() {
   cd \
     "${_name}-${pkgver}"
-  python \
+  "${_py}" \
     -m installer \
     --destdir="${pkgdir}" \
     dist/*.whl
